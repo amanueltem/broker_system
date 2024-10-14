@@ -3,10 +3,10 @@ package com.coderscampus.BrokerSystem.filter;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -21,19 +21,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.coderscampus.BrokerSystem.repository.AccountRepository;
 import com.coderscampus.BrokerSystem.util.JwtUtil;
 
-
-
-
-
-
-
 @Component
 public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private AccountRepository accountRepo;
     @Autowired
     private JwtUtil jwtUtil;
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -42,7 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         System.out.println(header);
         if (!StringUtils.hasText(header) || !header.startsWith("Bearer ")) {
-            //System.out.println("No JWT token found in request headers");
+            // System.out.println("No JWT token found in request headers");
             chain.doFilter(request, response);
             return;
         }
@@ -51,13 +44,13 @@ public class JwtFilter extends OncePerRequestFilter {
         UserDetails userDetails = accountRepo.findByUsername(jwtUtil.getUsernameFromToken(token)).orElse(null);
 
         if (!jwtUtil.validateToken(token, userDetails)) {
-            //System.out.println("JWT token validation failed");
+            // System.out.println("JWT token validation failed");
             chain.doFilter(request, response);
             return;
         }
 
         System.out.println("JWT token validation successful. Processing request...");
-        
+
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails == null ? List.of() : userDetails.getAuthorities());
 
@@ -66,4 +59,3 @@ public class JwtFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 }
-

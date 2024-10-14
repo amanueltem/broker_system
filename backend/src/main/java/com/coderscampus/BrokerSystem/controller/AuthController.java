@@ -1,6 +1,5 @@
 package com.coderscampus.BrokerSystem.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,9 +20,6 @@ import com.coderscampus.BrokerSystem.domain.Account;
 import com.coderscampus.BrokerSystem.dto.AuthCredentialsRequest;
 import com.coderscampus.BrokerSystem.util.JwtUtil;
 
-
-
-
 @RestController
 @RequestMapping("/api/auth")
 
@@ -32,35 +28,40 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtUtil jwtUtil;
+
+    @GetMapping("hello")
+    public String sayHello() {
+        return "Hello Man";
+    }
+
     @PostMapping("login")
-    public ResponseEntity<?>login(@RequestBody AuthCredentialsRequest request){
-        
-        try{
-            Authentication authenticate=authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken
-                (request.getUsername(), request.getPassword())
-            );
-            Account user=(Account) authenticate.getPrincipal();
+    public ResponseEntity<?> login(@RequestBody AuthCredentialsRequest request) {
+
+        try {
+            Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+            Account user = (Account) authenticate.getPrincipal();
             user.setPassword(null);
             return ResponseEntity.ok()
-            .header(HttpHeaders.AUTHORIZATION,
-            jwtUtil.generateToken(user))
-            .body(user);
+                    .header(HttpHeaders.AUTHORIZATION,
+                            jwtUtil.generateToken(user))
+                    .body(user);
 
-        }
-        catch(BadCredentialsException ex){
+        } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
     @GetMapping("validate")
     public ResponseEntity<?> validateToken(@RequestParam String token,
-    @AuthenticationPrincipal Account user){
-        Boolean isTokenValid=jwtUtil.validateToken(token, user);
+            @AuthenticationPrincipal Account user) {
+        Boolean isTokenValid = jwtUtil.validateToken(token, user);
         return ResponseEntity.ok(isTokenValid);
     }
+
     @PostMapping("create")
-    public ResponseEntity<?> createAccount(@RequestBody AuthCredentialsRequest request){
-        
+    public ResponseEntity<?> createAccount(@RequestBody AuthCredentialsRequest request) {
+        return ResponseEntity.ok(null);
     }
 
 }
