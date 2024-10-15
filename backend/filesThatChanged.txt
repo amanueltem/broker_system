@@ -1,0 +1,12 @@
+List of things changed
+	pom => 2.6.1 -> 3.3.3
+	Every Entity => javax -> jakarta
+	Securty Config => completely changed the Security Config thing
+	Reduced a bit of boilerplate code using lombok
+	From Account, User, Authority
+Might need to fix the jwtUtil class later
+	changed the authority setUser method to setAccount in two locations
+		Authority.java
+		AccountService.java (line 57)
+	added a hello endpoint in the authController.java for testing
+	added irrelevant code in the BrokerSystemApplication.java but commented out now
